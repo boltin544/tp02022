@@ -27,17 +27,31 @@ int crear_conexion(char *ip, char* puerto)
 	hints.ai_flags = AI_PASSIVE;
 
 	getaddrinfo(ip, puerto, &hints, &server_info);
+	//serverInfo tiene los datos necesrios paara la creacion de los sockets
 
 	// Ahora vamos a crear el socket.
 	int socket_cliente = 0;
 
-	// Ahora que tenemos el socket, vamos a conectarlo
+	socket_cliente = socket(servinfo->ai_family , servinfo->ai_socktype , servinfo->ai_protocolt);
 
+	if(socket_cliente == -1){
+		printf("Error, fallo la syscall socket()");
+	}
+
+	// Ahora que tenemos el socket, vamos a conectarlo
+	int posibleConectar = connect(socket_cliente , server_info->ai_addr, server_info->ai_addrlen);
+
+	if(posibleConectar == -1){
+		printf("No es posible establecer la conexion");
+	}
 
 	freeaddrinfo(server_info);
 
 	return socket_cliente;
 }
+
+//PREGUNTA: ACA SI LE PASASEMOS UN STRING YA DEIFNIDO PONELE UN "HOLA" NO HABRIA QUE SERIALIZAR, NO?
+//PERO COMO LE PASAMOS UN CHAR* OSEA NO SABEMOS EL TAMAÑO COMO "PREDETERMINADO"
 
 void enviar_mensaje(char* mensaje, int socket_cliente)
 {
